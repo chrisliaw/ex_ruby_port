@@ -1,0 +1,20 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    erlang-etf (2.0.0)
+      erlang-terms (~> 2.0)
+    erlang-terms (2.0.1)
+    ruby_ex_port (0.1.0)
+      erlang-etf (~> 2.0.0)
+      toolrack (~> 0.24)
+    toolrack (0.24.3)
+
+PLATFORMS
+  arm64-darwin-23
+  ruby
+
+DEPENDENCIES
+  ruby_ex_port
+
+BUNDLED WITH
+   2.5.1
