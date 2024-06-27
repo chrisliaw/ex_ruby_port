@@ -1,4 +1,5 @@
 defmodule ExRubyPort.RubySession do
+  alias ExRubyPort.RubyContext
   alias ExRubyPort.RubySession
   use GenServer
 
@@ -25,7 +26,7 @@ defmodule ExRubyPort.RubySession do
   def handle_call({:run, file, params}, _from, state) do
     port =
       Port.open(
-        {:spawn, "#{state.context.ruby_path} #{Path.expand(file)} #{Enum.join(params, " ")}"},
+        {:spawn, build_cmdline(state, file, params)},
         [
           :binary,
           :exit_status
@@ -40,5 +41,15 @@ defmodule ExRubyPort.RubySession do
     Port.close(port)
 
     {:reply, {:ok, res}, state}
+  end
+
+  defp build_cmdline(%{context: %RubyContext{} = ctx} = state, file, params) do
+    case ctx.with_bundle_exec? do
+      true ->
+        "bundle exec #{state.context.ruby_path} #{Path.expand(file)} #{Enum.join(params, " ")}"
+
+      false ->
+        "#{state.context.ruby_path} #{Path.expand(file)} #{Enum.join(params, " ")}"
+    end
   end
 end

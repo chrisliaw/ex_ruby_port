@@ -1,10 +1,10 @@
 defmodule ExRubyPort do
+  alias ExRubyPort.RubyContext
   alias ExRubyPort.RubyService
   alias ExRubyPort.RubySession
-  alias ExRubyPort.RubyContex
   use GenServer
 
-  def start_link(opts \\ %RubyContex{}) do
+  def start_link(opts \\ %RubyContext{}) do
     GenServer.start_link(__MODULE__, opts)
   end
 

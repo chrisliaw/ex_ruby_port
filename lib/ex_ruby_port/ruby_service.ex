@@ -1,4 +1,5 @@
 defmodule ExRubyPort.RubyService do
+  alias ExRubyPort.RubyContext
   use GenServer
 
   def start_link(sess, file, params) do
@@ -21,8 +22,8 @@ defmodule ExRubyPort.RubyService do
   def init(state) do
     port =
       Port.open(
-        {:spawn,
-         "#{state.session.context.ruby_path} #{Path.expand(state.file)} #{Enum.join(state.params, " ")}"},
+        {:spawn, build_cmdline(state)},
+        # "#{state.session.context.ruby_path} #{Path.expand(state.file)} #{Enum.join(state.params, " ")}"},
         [:binary, :exit_status, {:packet, 4}, :nouse_stdio]
       )
 
@@ -41,5 +42,15 @@ defmodule ExRubyPort.RubyService do
       end
 
     {:reply, :erlang.binary_to_term(res), state}
+  end
+
+  defp build_cmdline(%{session: %{context: %RubyContext{} = ctx}} = state) do
+    case ctx.with_bundle_exec? do
+      true ->
+        "bundle exec #{ctx.ruby_path} #{Path.expand(state.file)} #{Enum.join(state.params, " ")}"
+
+      false ->
+        "#{ctx.ruby_path} #{Path.expand(state.file)} #{Enum.join(state.params, " ")}"
+    end
   end
 end

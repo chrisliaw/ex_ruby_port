@@ -1,10 +1,10 @@
 defmodule ExRubyPortTest do
+  alias ExRubyPort.RubyContext
   alias ExRubyPort.RubyService
-  alias ExRubyPort.RubyContex
   use ExUnit.Case
 
   test "Call ruby code as port" do
-    {:ok, pid} = ExRubyPort.start_link(%RubyContex{})
+    {:ok, pid} = ExRubyPort.start_link(%RubyContext{})
     {:ok, res} = ExRubyPort.run(pid, "./test/ruby/hello.rb")
     IO.inspect(res)
     assert(res == "Hello from Ruby!\n")
